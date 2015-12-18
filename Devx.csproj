@@ -1,0 +1,119 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{762D508D-C436-48B8-B78D-DDB2D9B4CD34}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Devx</RootNamespace>
+    <AssemblyName>Devx.NET</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Cache\Caches.cs" />
+    <Compile Include="Cache\LightWeightCache.cs" />
+    <Compile Include="Cache\LRUCaching.cs" />
+    <Compile Include="Controls\Table.cs" />
+    <Compile Include="DbProvider\Builders\ActionsHandler.cs" />
+    <Compile Include="DbProvider\Builders\BuilderData.cs" />
+    <Compile Include="DbProvider\Builders\Delete\DeleteBuilder.cs" />
+    <Compile Include="DbProvider\Builders\Delete\IDeleteBuilder.cs" />
+    <Compile Include="DbProvider\Builders\Insert\IInsertBuilder.cs" />
+    <Compile Include="DbProvider\Builders\Insert\Obsolete\IInsertBuilderAnonymous.cs" />
+    <Compile Include="DbProvider\Builders\Insert\IInsertBuilderGeneric.cs" />
+    <Compile Include="DbProvider\Builders\Insert\InsertBuilder.cs" />
+    <Compile Include="DbProvider\Builders\Insert\Obsolete\InsertBuilderAnonymous.cs" />
+    <Compile Include="DbProvider\Builders\Insert\InsertBuilderGeneric.cs" />
+    <Compile Include="DbProvider\Builders\Select\ISelectBuilder.cs" />
+    <Compile Include="DbProvider\Builders\Select\SelectBuilder.cs" />
+    <Compile Include="DbProvider\Builders\SqlGenerator.cs" />
+    <Compile Include="DbProvider\Builders\TableColumn.cs" />
+    <Compile Include="DbProvider\Builders\Update\IUpdateBuilderGeneric.cs" />
+    <Compile Include="DbProvider\Builders\Update\Obsolete\IUpdateBuilderAnonymous.cs" />
+    <Compile Include="DbProvider\Builders\Update\IUpdateBuilder.cs" />
+    <Compile Include="DbProvider\Builders\Update\UpdateBuilder.cs" />
+    <Compile Include="DbProvider\Builders\Update\Obsolete\UpdateBuilderAnonymous.cs" />
+    <Compile Include="DbProvider\Builders\Update\UpdateBuilderGeneric.cs" />
+    <Compile Include="DbProvider\Command\DbCommand.cs" />
+    <Compile Include="DbProvider\Command\DbCommandData.cs" />
+    <Compile Include="DbProvider\Command\DbCommandExecute.cs" />
+    <Compile Include="DbProvider\Command\IDbCommand.cs" />
+    <Compile Include="DbProvider\Context\DbContext.cs" />
+    <Compile Include="DbProvider\Context\DbContextData.cs" />
+    <Compile Include="DbProvider\Context\IDbContext.cs" />
+    <Compile Include="DbProvider\Core\DataReaderField.cs" />
+    <Compile Include="DbProvider\Core\DataReaderHelper.cs" />
+    <Compile Include="DbProvider\Mappers\DynamicTypeAutoMapper.cs" />
+    <Compile Include="DbProvider\Core\PropertyExpressionParser.cs" />
+    <Compile Include="DbProvider\Core\ReflectionHelper.cs" />
+    <Compile Include="DbProvider\Core\DBClientException.cs" />
+    <Compile Include="DbProvider\Providers\DbTypeMapper.cs" />
+    <Compile Include="DbProvider\Providers\ConnectionFactory.cs" />
+    <Compile Include="DbProvider\Providers\DbProviderFactory.cs" />
+    <Compile Include="DbProvider\Providers\DbProviderTypes.cs" />
+    <Compile Include="DbProvider\Providers\IDbProvider.cs" />
+    <Compile Include="DbProvider\Providers\MySql\MySqlProvider.cs" />
+    <Compile Include="DbProvider\Providers\SqlServer\SqlServerProvider.cs" />
+    <Compile Include="Extensiones\test.cs" />
+    <Compile Include="Extensiones\ConvertToStringExtensiones.cs" />
+    <Compile Include="Extensiones\ConvertTypeExtensiones.cs" />
+    <Compile Include="Extensiones\Dynamic.cs" />
+    <Compile Include="Extensiones\ConvertObjectExtensiones.cs" />
+    <Compile Include="Extensiones\StringExtensiones.cs" />
+    <Compile Include="FileUploader.cs" />
+    <Compile Include="Helper\EncryptHelper.cs" />
+    <Compile Include="Helper\FileUploader.cs" />
+    <Compile Include="Helper\HTTP.cs" />
+    <Compile Include="Helper\HttpParameter.cs" />
+    <Compile Include="Helper\HttpRequest.cs" />
+    <Compile Include="Helper\Pagination.cs" />
+    <Compile Include="Helper\ReflectionHelper.cs" />
+    <Compile Include="Helper\ValidateHelper.cs" />
+    <Compile Include="Helper\WebHelper.cs" />
+    <Compile Include="Photos.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

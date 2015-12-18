@@ -1,0 +1,14 @@
+E:\project\zjgyh\Code\Devx\bin\Debug\Devx.NET.dll
+E:\project\zjgyh\Code\Devx\bin\Debug\Devx.NET.pdb
+E:\project\zjgyh\Code\Devx\obj\Debug\ResolveAssemblyReference.cache
+E:\project\zjgyh\Code\Devx\obj\Debug\Devx.NET.dll
+E:\project\zjgyh\Code\Devx\obj\Debug\Devx.NET.pdb
+E:\project\jnbank\Devx\bin\Debug\Devx.NET.dll
+E:\project\jnbank\Devx\bin\Debug\Devx.NET.pdb
+E:\project\jnbank\Devx\obj\Debug\ResolveAssemblyReference.cache
+E:\project\jnbank\Devx\obj\Debug\Devx.NET.dll
+E:\project\jnbank\Devx\obj\Debug\Devx.NET.pdb
+E:\project\common\Devx\bin\Debug\Devx.NET.dll
+E:\project\common\Devx\bin\Debug\Devx.NET.pdb
+E:\project\common\Devx\obj\Debug\Devx.NET.dll
+E:\project\common\Devx\obj\Debug\Devx.NET.pdb
