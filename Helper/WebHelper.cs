@@ -144,15 +144,21 @@ namespace Devx
             }
             return string.Empty;
         }
-        public static string Form(string name)
+        public static string Form(string name, bool encode=true)
         {
             if (HttpContext.Current != null && HttpContext.Current.Request != null && HttpContext.Current.Request.Form != null)
             {
-                return System.Web.HttpUtility.HtmlEncode(HttpContext.Current.Request.Form[name] ?? string.Empty);
+                if (encode)
+                {
+                    return System.Web.HttpUtility.HtmlEncode(HttpContext.Current.Request.Form[name] ?? string.Empty);
+                }
+
+                return HttpContext.Current.Request.Form[name] ?? string.Empty;
             }
             return string.Empty;
         }
 
+        
 
         /// <summary>
         /// 是否是get请求
