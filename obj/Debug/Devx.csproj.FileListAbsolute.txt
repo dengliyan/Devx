@@ -12,3 +12,7 @@ E:\project\common\Devx\bin\Debug\Devx.NET.dll
 E:\project\common\Devx\bin\Debug\Devx.NET.pdb
 E:\project\common\Devx\obj\Debug\Devx.NET.dll
 E:\project\common\Devx\obj\Debug\Devx.NET.pdb
+E:\project\Github\Devx\bin\Debug\Devx.NET.dll
+E:\project\Github\Devx\bin\Debug\Devx.NET.pdb
+E:\project\Github\Devx\obj\Debug\Devx.NET.dll
+E:\project\Github\Devx\obj\Debug\Devx.NET.pdb

@@ -136,19 +136,27 @@ namespace Devx
 
         #region 客户端信息
 
-        public static string Query(string name)
+        public static string Query(string name, bool encode = true)
         {
             if (HttpContext.Current != null && HttpContext.Current.Request != null && HttpContext.Current.Request.QueryString != null)
             {
-                return System.Web.HttpUtility.HtmlEncode(HttpContext.Current.Request.QueryString[name] ?? string.Empty);
+                if (encode)
+                {
+                    return System.Web.HttpUtility.HtmlEncode(HttpContext.Current.Request.QueryString[name] ?? string.Empty);
+                }
+                return HttpContext.Current.Request.QueryString[name] ?? string.Empty;
             }
             return string.Empty;
         }
-        public static string Form(string name)
+        public static string Form(string name, bool encode = true)
         {
             if (HttpContext.Current != null && HttpContext.Current.Request != null && HttpContext.Current.Request.Form != null)
             {
-                return System.Web.HttpUtility.HtmlEncode(HttpContext.Current.Request.Form[name] ?? string.Empty);
+                if (encode)
+                {
+                    return System.Web.HttpUtility.HtmlEncode(HttpContext.Current.Request.Form[name] ?? string.Empty);
+                }
+                return HttpContext.Current.Request.Form[name] ?? string.Empty;
             }
             return string.Empty;
         }
