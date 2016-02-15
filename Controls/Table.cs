@@ -494,13 +494,13 @@ namespace Devx.Controls
                 this.icon = new string[] { "▲", "▼" };
             }
 
-            public DefaultTableStrategy(string field, FieldSort sort, Action<System.Web.UI.WebControls.Table> init)
+            public DefaultTableStrategy(string field, FieldSort sort, Action<System.Web.UI.WebControls.Table> builder)
             {
                 this._tag = TableTag.Table;
                 this._table = new System.Web.UI.WebControls.Table();
-                if (init != null)
+                if (builder != null)
                 {
-                    init(this._table);
+                    builder(this._table);
                 }
                 this.OrderField = field;//排序字段
                 this.Sort = sort;//排序方式
