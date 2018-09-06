@@ -36,6 +36,7 @@ namespace Devx.DbProvider
             {
                 Data.Connection.Close();
             }
+
             Data.Connection.Dispose();//释放连接资源
         }
 

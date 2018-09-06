@@ -448,8 +448,10 @@ namespace Devx.Controls
                 {
                     this._table.RenderControl(htmlWriter);
                 }
-
-                return sbTemp.ToString();
+                var html = sbTemp.ToString();
+                //删除两个标签之间的空白行
+                html= System.Text.RegularExpressions.Regex.Replace(html,@">[\s]*<","><");
+                return html;
             }
         }
         #endregion

@@ -16,3 +16,18 @@ E:\project\Github\Devx\bin\Debug\Devx.NET.dll
 E:\project\Github\Devx\bin\Debug\Devx.NET.pdb
 E:\project\Github\Devx\obj\Debug\Devx.NET.dll
 E:\project\Github\Devx\obj\Debug\Devx.NET.pdb
+F:\project\Github\Devx\bin\Debug\Devx.NET.dll
+F:\project\Github\Devx\bin\Debug\Devx.NET.pdb
+F:\project\Github\Devx\obj\Debug\Devx.NET.dll
+F:\project\Github\Devx\obj\Debug\Devx.NET.pdb
+F:\project\Github\Devx\obj\Debug\Devx.csprojResolveAssemblyReference.cache
+G:\project\Github\Devx\bin\Debug\Devx.NET.dll
+G:\project\Github\Devx\bin\Debug\Devx.NET.pdb
+G:\project\Github\Devx\obj\Debug\Devx.csprojResolveAssemblyReference.cache
+G:\project\Github\Devx\obj\Debug\Devx.NET.dll
+G:\project\Github\Devx\obj\Debug\Devx.NET.pdb
+D:\stockstar\My Documents\Github\Devx\bin\Debug\Devx.NET.dll
+D:\stockstar\My Documents\Github\Devx\bin\Debug\Devx.NET.pdb
+D:\stockstar\My Documents\Github\Devx\obj\Debug\Devx.NET.dll
+D:\stockstar\My Documents\Github\Devx\obj\Debug\Devx.NET.pdb
+D:\stockstar\My Documents\Github\Devx\obj\Debug\Devx.csprojResolveAssemblyReference.cache

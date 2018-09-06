@@ -35,29 +35,36 @@ namespace Devx
         /// </summary>
         public string Original { get; set; }
 
+        public int Width { get; set; }
+
+        public int Height { get; set; }
+
+
 
         private static bool SaveAs(string filename, byte[] bytes)
         {
             try
             {
                 //读取配置文件
-                string path = System.Configuration.ConfigurationManager.AppSettings["FileUploader"];
-
+                string path = System.Configuration.ConfigurationManager.AppSettings["FileUploader.Path"];
                 if (string.IsNullOrEmpty(path))//如果配置为空，则使用当前的根目录
                 {
-                    path = System.Web.Hosting.HostingEnvironment.MapPath("/");
+                     path = System.Web.Hosting.HostingEnvironment.MapPath("/");
                 }
-
-                filename = System.IO.Path.Combine(path, filename.TrimStart('/'));
-
-                string dir = System.IO.Path.GetDirectoryName(filename);
-
-                if (!System.IO.Directory.Exists(dir))
+                if (!string.IsNullOrEmpty(path))//如果配置为空，则使用当前的根目录
                 {
-                    System.IO.Directory.CreateDirectory(dir);
-                }
 
-                System.IO.File.WriteAllBytes(filename, bytes);
+                    filename = System.IO.Path.Combine(path, filename.TrimStart('/'));
+
+                    string dir = System.IO.Path.GetDirectoryName(filename);
+
+                    if (!System.IO.Directory.Exists(dir))
+                    {
+                        System.IO.Directory.CreateDirectory(dir);
+                    }
+
+                    System.IO.File.WriteAllBytes(filename, bytes);
+                }
 
                 return true;
             }
@@ -73,7 +80,7 @@ namespace Devx
 
             return "." + temp[temp.Length - 1].ToLower();
         }
-        
+
         /// <summary>
         /// 保存文件到本地
         /// </summary>
@@ -83,24 +90,25 @@ namespace Devx
         /// <param name="size"></param>
         /// <param name="onProcess"></param>
         /// <returns></returns>
-        public static FileUploader Receive()
+        public static FileUploader Receive(string action = "uploadimage", int filesize = 500, string fileexts = null, int[] imgzoom = null)
         {
-            //参数初始化
-            var filetype = WebHelper.Form("filetype").ToInt(WebHelper.Query("filetype").ToInt(1));//文件上传模式，可以上传的文件类型
-            //var filesize = WebHelper.Form("filesize").ToInt(50 * 1024);//最大允许上传的文件大小  20M
-            var fileexts = WebHelper.Form("fileexts").ToLower();//可以文件类型
-            var imgzoom  = WebHelper.Form("zoom").ToArray(":");//文件裁减//w:h:0
+            bool image = action.ToLower() == "uploadimage";
+           
+            //如果数据是转过来的
+            var filename = WebHelper.Form("filename");
             var files = System.Web.HttpContext.Current.Request.Files;
-
-            //filesize = filesize < 0 ? 50 * 1024 : filesize;
-            //filesize = filesize > 50 * 1024 ? 50 * 1024 : filesize;
-            var filesize = 50 * 1024;
+            var filetransfer = WebHelper.Form("filetransfer").ToLower() == "true";
+            //默认为50M
+            filesize = filesize < 0 ? 50 * 1024 : filesize;
+            filesize = filesize > 50 * 1024 ? 50 * 1024 : filesize;
+            
             #region 文件格式处理
             HashSet<string> allowtypes = new HashSet<string>() { ".rar", ".zip", ".doc", ".docx", ".pdf", ".txt", ".swf", ".xls", ".xlsx" };
-            if (filetype == 1)
+            if (image)
             {
                 allowtypes = new HashSet<string>() { ".gif", ".png", ".jpg", ".jpeg", ".bmp" };
-                filesize = 1024 * 10;
+                filesize = filesize < 0 ? 1024 : filesize;
+                filesize = filesize > 1024 ? 1024 : filesize;
             }
             if (!string.IsNullOrEmpty(fileexts) && fileexts != "" && fileexts.StartsWith("."))
             {
@@ -117,7 +125,7 @@ namespace Devx
                 allowtypes = types;
             }
             #endregion
-            
+
             #region 文件检查
             if (files == null || files.Count == 0 || files[0].InputStream == null || files[0].InputStream.Length == 0)
             {
@@ -143,7 +151,6 @@ namespace Devx
                 DateTime now = DateTime.Now.Date;
 
                 //保存的路径 
-                string locator = "/" + "upload" + "/" + (filetype == 1 ? "images" : "files") + "/" + now.Year + "/" + now.Month.ToString("00") + "/" + now.Day.ToString("00") + "/";
 
                 byte[] bytes = new byte[uploadFile.ContentLength];
 
@@ -153,8 +160,123 @@ namespace Devx
                     fs.Close();
                 }
 
+                int w = 0;
+                int h = 0;
+
                 #region 图片需要特殊处理
-                if (filetype == 1)//判断是否为图片
+                if (image)//判断是否为图片
+                {
+                    #region 加载成图片，并可图片进行缩放处理
+                    try
+                    {
+                        using (var ms = new System.IO.MemoryStream(bytes, 0, bytes.Length))//二进制
+                        using (var sImage = System.Drawing.Image.FromStream(ms))
+                        {
+                             w = sImage.Width;
+                             h = sImage.Height;
+                            ImageFormat format = sImage.RawFormat;//  
+
+                            if (format.Equals(ImageFormat.Jpeg))
+                            {
+                                currentType = ".jpg";
+                            }
+                            if (format.Equals(ImageFormat.Png))
+                            {
+                                currentType = ".png";
+                            }
+                            if (format.Equals(ImageFormat.Bmp))
+                            {
+                                currentType = ".bmp";
+                            }
+                            if (format.Equals(ImageFormat.Gif))
+                            {
+                                currentType = ".gif";
+                            }
+
+                            //如果需要进行处理，则进行相应的操作
+                            if (imgzoom.Length > 0 && (imgzoom[0] > 0 || imgzoom[1] > 0))
+                            {
+                                if (!Photos.Zoom(ref bytes, sImage.Width, sImage.Height, imgzoom[0], imgzoom[1], ref currentType))
+                                {
+                                    //文件缩放失败
+                                }
+                            }
+
+
+
+                            if (!allowtypes.Contains(currentType))//检查当前文件格式是否符合要求
+                            {
+                                return new FileUploader() { Success = false, Message = "文件类型不符合要求" };
+                            }
+                        }
+                    }
+                    catch
+                    {
+                        return new FileUploader() { Success = false, Message = "文件类型不符合要求。" };
+                    }
+                    #endregion
+                }
+                #endregion
+
+                var t = "";
+                if (string.IsNullOrEmpty(filename))
+                {
+                    string locator = "/" + "upload" + "/" + (image ? "images" : "files") + "/" + now.Year + "/" + now.Month.ToString("00") + "/" + now.Day.ToString("00") + "/";
+                    filename = (locator + DateTime.Now.ToString("HHmmssfff") + currentType);
+
+                    if (!image && currentType.ToLower() == ".pdf")//如果是pdf，单独上传一个
+                    {
+                        locator = "/" + "upload" + "/pdf/" + now.Year + "/" + now.Month.ToString("00") + "/" + now.Day.ToString("00") + "/";
+                        filename = (locator + DateTime.Now.ToString("HHmmssfff") + currentType);
+                    }
+                }
+                else
+                {
+                    filename = System.Web.HttpUtility.UrlDecode(filename, Encoding.UTF8);
+                }
+
+                var success = SaveAs(filename, bytes);
+
+                if (success && !filetransfer)//设置一个标志，为了防止重复调用 
+                {
+                    string[] transfers = (System.Configuration.ConfigurationManager.AppSettings["FileUploader.Transfer"] ?? "").Split(new string[] { "|" }, StringSplitOptions.RemoveEmptyEntries);
+
+                    foreach (var transfer in transfers)
+                    {
+                        if (!string.IsNullOrEmpty(transfer))
+                        {
+                            FileUploader.Transfer(transfer + "?action=" + action, bytes, filename);
+                        }
+                    }
+                }
+
+                var server = System.Configuration.ConfigurationManager.AppSettings["FileUploader.Locator"];
+                if (string.IsNullOrWhiteSpace(server))
+                {
+                    server = "/";
+                }
+                //locator = locator.TrimEnd("/");
+                return new FileUploader() {  Width=w,Height=h, Success = success, Message = "", Locator = server.TrimEnd('/') + "/" + filename.TrimStart('/'), Original = originalName, FileType = currentType };
+            }
+            catch (Exception ex)
+            {
+                return new FileUploader() { Success = false, Message = ex.Message.ToString() };
+            }
+        }
+
+        public static FileUploader ReceiveImg(byte[] bytes)
+        {
+            bool image = true;
+            var filename = "";
+            var filetransfer = false;
+            try
+            {
+                DateTime now = DateTime.Now.Date;
+
+                string currentType = "";
+
+                #region 图片需要特殊处理
+                if (image)//判断是否为图片
                 {
                     #region 加载成图片，并可图片进行缩放处理
                     try
@@ -180,20 +302,6 @@ namespace Devx
                             {
                                 currentType = ".gif";
                             }
-
-                            //如果需要进行处理，则进行相应的操作
-                            if (imgzoom.Length > 0 && (imgzoom[0] > 0 || imgzoom[1] > 0))
-                            {
-                                if (!Photos.Zoom(ref bytes, sImage.Width, sImage.Height, imgzoom[0], imgzoom[1],  ref currentType))
-                                {
-                                    //文件缩放失败
-                                }
-                            }
-
-                            if (!allowtypes.Contains(currentType))//检查当前文件格式是否符合要求
-                            {
-                                return new FileUploader() { Success = false, Message = "文件类型不符合要求" };
-                            }
                         }
                     }
                     catch
@@ -204,11 +312,45 @@ namespace Devx
                 }
                 #endregion
 
-                string filename = System.Guid.NewGuid().ToString().ToLower().Replace("-", "") + currentType;
+                var t = "";
+                if (string.IsNullOrEmpty(filename))
+                {
+                    string locator = "/" + "upload" + "/" + (image ? "images" : "files") + "/" + now.Year + "/" + now.Month.ToString("00") + "/" + now.Day.ToString("00") + "/";
+                    filename = (locator + DateTime.Now.ToString("HHmmssfff") + currentType);
 
-                filename = (locator + filename);
+                    if (!image && currentType.ToLower() == ".pdf")//如果是pdf，单独上传一个
+                    {
+                        locator = "/" + "upload" + "/pdf/" + now.Year + "/" + now.Month.ToString("00") + "/" + now.Day.ToString("00") + "/";
+                        filename = (locator + DateTime.Now.ToString("HHmmssfff") + currentType);
+                    }
+                }
+                else
+                {
+                    filename = System.Web.HttpUtility.UrlDecode(filename, Encoding.UTF8);
+                }
 
-                return new FileUploader() { Success = SaveAs(filename, bytes), Message = "", Locator = "/" + filename.TrimStart('/'), Original = originalName, FileType = currentType };
+                var success = SaveAs(filename, bytes);
+
+                if (success && !filetransfer)//设置一个标志，为了防止重复调用 
+                {
+                    string[] transfers = (System.Configuration.ConfigurationManager.AppSettings["FileUploader.Transfer"] ?? "").Split(new string[] { "|" }, StringSplitOptions.RemoveEmptyEntries);
+
+                    foreach (var transfer in transfers)
+                    {
+                        if (!string.IsNullOrEmpty(transfer))
+                        {
+                            FileUploader.Transfer(transfer + "?action=uploadimage", bytes, filename);
+                        }
+                    }
+                }
+
+                var server = System.Configuration.ConfigurationManager.AppSettings["FileUploader.Locator"];
+                if (string.IsNullOrWhiteSpace(server))
+                {
+                    server = "/";
+                }
+                //locator = locator.TrimEnd("/");
+                return new FileUploader() { Success = success, Message = "", Locator = server.TrimEnd('/') + "/" + filename.TrimStart('/'), Original = "", FileType = currentType };
             }
             catch (Exception ex)
             {
@@ -220,12 +362,13 @@ namespace Devx
         {
             //参数初始化
             var filetype = WebHelper.Form("filetype").ToInt(1);//文件上传模式，可以上传的文件类型
-            //var filesize = WebHelper.Form("filesize").ToInt(20 * 1024);//最大允许上传的文件大小 20M
+            var filesize = WebHelper.Form("filesize").ToInt(20 * 1024);//最大允许上传的文件大小
             var fileexts = WebHelper.Form("fileexts").ToLower();//可以文件类型
             var imgzoom = WebHelper.Form("zoom").ToArray(":");//文件裁减//w:h:0
             var files = System.Web.HttpContext.Current.Request.Files;
-            var filesize = 50 * 1024;
-            
+
+            filesize = filesize < 0 ? 20 * 1024 : filesize;
+            filesize = filesize > 20 * 1024 ? 20 * 1024 : filesize;
 
 
             #region 文件格式处理
@@ -233,7 +376,8 @@ namespace Devx
             if (filetype == 1)
             {
                 allowtypes = new HashSet<string>() { ".gif", ".png", ".jpg", ".jpeg", ".bmp" };
-                filesize = 1024 * 10;
+                filesize = filesize < 0 ? 100 : filesize;
+                filesize = filesize > 100 ? 100 : filesize;
             }
             if (!string.IsNullOrEmpty(fileexts) && fileexts != "")
             {
@@ -285,11 +429,11 @@ namespace Devx
                     // 边界符  
                     var beginBoundary = Encoding.ASCII.GetBytes("--" + boundary + "\r\n");
                     // 最后的结束符  
-                    var endBoundary = Encoding.ASCII.GetBytes("\r\n--" + boundary + "--\r\n");
+                    var endBoundary = Encoding.ASCII.GetBytes("--" + boundary + "--\r\n");
 
                     // 设置属性  
                     request.Method = "POST";
-                    request.Timeout = 30*1000;
+                    request.Timeout = 30 * 1000;
                     request.ContentType = "multipart/form-data; boundary=" + boundary;
 
                     // 写入文件  
@@ -313,12 +457,12 @@ namespace Devx
                     // 写入字符串的Key  
                     var stringKeyHeader = "\r\n--" + boundary +
                                            "\r\nContent-Disposition: form-data; name=\"{0}\"" +
-                                           "\r\n\r\n{1}";
+                                           "\r\n\r\n{1}\r\n";
 
-                  
-                    var values=new Dictionary<string,string>();
-                    values["filetype"]=filetype.ToString();
-                    values["filesize"]=filesize.ToString();
+
+                    var values = new Dictionary<string, string>();
+                    values["filetype"] = filetype.ToString();
+                    values["filesize"] = filesize.ToString();
                     if (string.IsNullOrEmpty(fileexts))
                     {
                         values["fileexts"] = fileexts.ToString();
@@ -329,7 +473,7 @@ namespace Devx
                     }
                     foreach (var e in values)
                     {
-                        header = string.Format(filePartHeader, e.Key, System.Web.HttpUtility.UrlEncode(e.Value, Encoding.UTF8).Replace("+", "%20"));
+                        header = string.Format(stringKeyHeader, e.Key, System.Web.HttpUtility.UrlEncode(e.Value, Encoding.UTF8).Replace("+", "%20"));
                         bytes = Encoding.UTF8.GetBytes(header);
                         ms.Write(bytes, 0, bytes.Length);//写入内容
                     }
@@ -386,7 +530,7 @@ namespace Devx
             {
                 return new FileUploader() { Success = false, Message = ex.Message.ToString() };
             }
-            return new FileUploader() { Success=false, Message="未知错误！！" };
+            return new FileUploader() { Success = false, Message = "未知错误！！" };
             #endregion
         }
 

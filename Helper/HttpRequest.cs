@@ -19,6 +19,8 @@ namespace Devx
             ReadWriteTimeout = 30000;
 
             Cookies = new System.Net.CookieContainer();//创建一个默认
+
+            HttpErrorIsSuccess = false;
         }
 
         /// <summary>
@@ -51,6 +53,8 @@ namespace Devx
         /// </summary>
         public string Body { get; set; }
 
+        public byte[] WriteStream { get; set; }
+
         public System.Net.CookieContainer Cookies { get; set; }
 
         /// <summary>
@@ -62,6 +66,8 @@ namespace Devx
         /// 参数特殊处理
         /// </summary>
         public Action<System.Net.HttpWebRequest> BeforeSend { get; set; }
+
+
 
         /// <summary>
         /// 异常处理
@@ -77,5 +83,35 @@ namespace Devx
         /// 接收字符
         /// </summary>
         public Action<HttpRequest, string> Html { get; set; }
+
+
+        public override string ToString()
+        {
+            if (string.IsNullOrWhiteSpace(this.Body))
+            {
+                return this.Method + " " + this.Url;
+            }
+            return this.Method + " " + this.Url + "" + (this.Method.ToUpper() == "GET" ? "" : " " + this.Body);
+        }
+
+        public string GetString(byte[] buffer, Encoding e = null)
+        {
+            if (buffer == null || buffer.Length == 0)
+            {
+                return null;
+            }
+            var encoding = e != null ? e : this.Encoding != null ? this.Encoding : System.Text.Encoding.UTF8;
+            return encoding.GetString(buffer, 0, buffer.Length);
+        }
+
+        public System.Net.HttpStatusCode StatusCode { get; set; }
+
+        /// <summary>
+        /// Http异常为成功，需要根据HttpStatusCode自行判断
+        /// </summary>
+        public bool HttpErrorIsSuccess { get; set; }
+
     }
+
+
 }

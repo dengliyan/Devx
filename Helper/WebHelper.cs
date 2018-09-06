@@ -236,11 +236,29 @@ namespace Devx
         public static string GetIP()
         {
             string ip = string.Empty;
-            if (HttpContext.Current.Request.ServerVariables["HTTP_VIA"] != null)
-                ip = HttpContext.Current.Request.ServerVariables["HTTP_X_FORWARDED_FOR"].ToString();
-            else
+            if (HttpContext.Current == null || HttpContext.Current.Request == null)
+            {
+                return "127.0.0.1";
+            }
+            if (HttpContext.Current.Request.ServerVariables["HTTP_X_FORWARDED_FOR"] != null)
+            {
+                var ips = HttpContext.Current.Request.ServerVariables["HTTP_X_FORWARDED_FOR"].ToString().Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);
+                if (ips != null && ips.Length > 0)
+                {
+                    foreach (var x in ips)
+                    {
+                        if (!string.IsNullOrEmpty(ip) && !ValidateHelper.IsIP(ip))
+                        {
+                            ip = x;
+                            break;
+                        }
+                    }
+                }
+            }
+            else if (HttpContext.Current.Request.ServerVariables["REMOTE_ADDR"] != null)
+            {
                 ip = HttpContext.Current.Request.ServerVariables["REMOTE_ADDR"].ToString();
-
+            }
             if (string.IsNullOrEmpty(ip) || !ValidateHelper.IsIP(ip))
                 ip = "127.0.0.1";
             return ip;

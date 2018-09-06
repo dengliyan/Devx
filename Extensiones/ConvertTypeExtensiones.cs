@@ -26,6 +26,15 @@ namespace Devx
             return int.TryParse(s.Trim(), out i) ? i : defaultValue;
         }
 
+        public static long ToInt(this string s, long defaultValue)
+        {
+            if (string.IsNullOrWhiteSpace(s)) return defaultValue;
+
+            long i = 0;
+
+            return long.TryParse(s.Trim(), out i) ? i : defaultValue;
+        }
+
         public static int? ToIntNullable(this string s)
         {
             if (string.IsNullOrWhiteSpace(s)) return null;
@@ -113,8 +122,6 @@ namespace Devx
             return DateTime.TryParseExact(s, format, null, System.Globalization.DateTimeStyles.None, out i) ? i : defaultValue;
         }
         
-
-
         public static DateTime? ToDateTimeNullable(this string s)
         {
             if (string.IsNullOrWhiteSpace(s))
@@ -182,6 +189,27 @@ namespace Devx
 
             return lists.ToArray();
         }
+
+        #region UnixTime
+        /// <summary>
+        /// 毫秒
+        /// </summary>
+        /// <param name="t"></param>
+        /// <returns></returns>
+        public static long ToUnixTimestamp(this DateTime t)
+        {
+             DateTime start = TimeZone.CurrentTimeZone.ToLocalTime(new DateTime(1970,1,1));
+           
+            return Convert.ToInt64((t - start).TotalSeconds) * 1000;
+        }
+        public static DateTime ToDateTime(this long timestamp)
+        {
+            //var start = new DateTime(1970, 1, 1, 0, 0, 0, DateTime.Now.Kind);
+            DateTime start = TimeZone.CurrentTimeZone.ToLocalTime(new DateTime(1970,1,1));
+            return start.AddMilliseconds(timestamp);
+        }
+        #endregion
+
 
         #region MyRegion
         //public static dynamic ToDynamic(this object value)

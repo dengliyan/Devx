@@ -78,6 +78,20 @@
             return value.HasValue ? value.Value.ExToString(format, ratio) : defaultValue;
         }
 
+
+        public static string ExToUnitString(this double value)
+        {
+            if (value < 10000)//小于万
+            {
+                return (value / 10000).ToString("F2") + "万";
+            }
+            if (value < 100000000)//小于万
+            {
+                return (value / 10000).ToString("F2") + "万";
+            }
+
+            return (value / 100000000).ToString("F2") + "亿";
+        }
         
         public static string ExToString(this decimal value, string format, sbyte ratio)
         {
@@ -169,6 +183,51 @@
 
         
         public const string W3CDATETIME="yyyy-MM-ddTHH:mm:sszzzz";
+
+
+        /// <summary>
+
+        /// 时间戳转为C#格式时间
+
+        /// </summary>
+
+        /// <param name=”timeStamp”></param>
+
+        /// <returns></returns>
+
+        private static DateTime GetTime(string timeStamp)
+        {
+
+            DateTime dtStart = TimeZone.CurrentTimeZone.ToLocalTime(new DateTime(1970, 1, 1));
+
+            long lTime = long.Parse(timeStamp + "0000000");
+
+            TimeSpan toNow = new TimeSpan(lTime); 
+            
+            return dtStart.Add(toNow);
+
+        }
+
+
+
+        /// <summary>
+
+        /// DateTime时间格式转换为Unix时间戳格式
+
+        /// </summary>
+
+        /// <param name=”time”></param>
+
+        /// <returns></returns>
+
+        private static int ConvertDateTimeInt(System.DateTime time)
+        {
+
+            System.DateTime startTime = TimeZone.CurrentTimeZone.ToLocalTime(new System.DateTime(1970, 1, 1));
+
+            return (int)(time - startTime).TotalSeconds;
+
+        }
         
     }
 

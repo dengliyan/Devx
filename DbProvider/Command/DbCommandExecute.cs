@@ -60,7 +60,7 @@ namespace Devx.DbProvider
             }
             catch (Exception ex)
             {
-                throw new DBClientException(ex.Message.ToString()) { CmdText = this._command.Data.InnerCommand.CommandText };
+                throw new DBClientException(ex.ToString()) { CmdText = this._command.Data.InnerCommand.CommandText };
             }
             finally
             {

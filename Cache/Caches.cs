@@ -69,6 +69,11 @@ namespace Devx.Cache
             CacheContainer.Remove(key);
         }
 
+        public static void Remove(IKeyPrefix prefix, string key)
+        {
+            CacheContainer.Remove(prefix.Prefix + ":" + key);
+        }
+
         /// <summary>
         /// 添加默认为三分钟的缓存
         /// </summary>
@@ -139,6 +144,15 @@ namespace Devx.Cache
 
         }
 
+        public static void Insert(IKeyPrefix prefix, string key, object obj, CacheDependency dep = null, CacheItemPriority priority = CacheItemPriority.Normal)
+        {
+            if (obj != null)
+            {
+                string realKey = prefix.Prefix + ":" + key;
+                CacheContainer.Insert(realKey, obj, dep, prefix.ExpireSeconds <= 0 ? DateTime.MaxValue : DateTime.Now.AddSeconds(prefix.ExpireSeconds), TimeSpan.Zero, priority, null);
+            }
+        }
+
         /// <summary>
         /// 添加永不过期缓存
         /// </summary>
@@ -169,6 +183,28 @@ namespace Devx.Cache
         public static object Get(string key)
         {
             Object cacheObject = CacheContainer[key];
+            if (cacheObject != null)
+            {
+                string oType = cacheObject.GetType().Name.ToString();
+                if (oType.IndexOf("[]") > 0)
+                {
+                    if (((Array)cacheObject).Length == 0)
+                    {
+                        return null;
+                    }
+                    else
+                    {
+                        return cacheObject;
+                    }
+                }
+            }
+            return cacheObject;
+        }
+
+        public static object Get(IKeyPrefix prefix, string key)
+        {
+            string realKey = prefix.Prefix + ":" + key;
+            Object cacheObject = CacheContainer[realKey];
             if (cacheObject != null)
             {
                 string oType = cacheObject.GetType().Name.ToString();

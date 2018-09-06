@@ -72,5 +72,32 @@ namespace Devx
             }
             return sBuilder.ToString(); 
         }
+
+
+        public static string SHA(string s)
+        {
+            System.Security.Cryptography.SHA1 sha = new System.Security.Cryptography.SHA1CryptoServiceProvider();
+            byte[] buffer = System.Text.Encoding.UTF8.GetBytes(s);
+            byte[] bytes = sha.ComputeHash(buffer);
+            StringBuilder sbTemp = new StringBuilder();
+            foreach (byte i in bytes)
+            {
+                sbTemp.AppendFormat("{0:x2}", i);
+            }
+            return sbTemp.ToString().ToUpper();
+        }
+
+        public static string SHA(byte[] buffer)
+        {
+            System.Security.Cryptography.SHA1 sha = new System.Security.Cryptography.SHA1CryptoServiceProvider();
+            //计算哈希值
+            byte[] bytes = sha.ComputeHash(buffer);
+            StringBuilder sbTemp = new StringBuilder();
+            foreach (byte i in bytes)
+            {
+                sbTemp.AppendFormat("{0:x2}", i);
+            }
+            return sbTemp.ToString().ToUpper();
+        }
     }
 }

@@ -42,12 +42,7 @@
             return isTrim ? attribute.Value.Trim() : attribute.Value;
         }
 
-        public static string AsString(this System.Data.IDataReader reader, string name, string defaultValue = "")
-        {
-            var o = reader[name];
-
-            return o != null && o != DBNull.Value ? o.ToString().Trim() : defaultValue;
-        }
+        
     }
 
 }

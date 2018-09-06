@@ -310,7 +310,7 @@ namespace Devx.Cache
                         e.Updatetime = DateTime.Now;//更新最后更新时间
                         CacheTable[e.Key] = e;
                         CacheMutexMapping.Remove(key);//在数据执行完成清空数据，等待下一次完成
-                        W(e.Key, result);//同时更新文件
+                        _W(e.Key, result);//同时更新文件
                     }
 
                     //Log("[Executing] [" + e.Key + "] [" + e.Updatetime.ToString("yyyy-MM-dd HH:mm:ss") + "] [" + (e.IsDaily ? e.Timeout.ToString() : ((int)e.Timeout.TotalSeconds).ToString()) + "] OK...");
@@ -364,7 +364,7 @@ namespace Devx.Cache
                     if (e == null || e.Value == null || e.Value == default(T))//如果内存中不存在
                     {
                         DateTime w = DateTime.MinValue;
-                        result = R(o.Key, out w);//从文件加载 
+                        result = _R(o.Key, out w);//从文件加载 
                         e = new CacheEntityObject();//创建一个新对象，添加到缓存中
                         e.Key = o.Key;
                         e.IsDaily = o.IsDaily;
@@ -395,7 +395,7 @@ namespace Devx.Cache
                 {
                     lock(LockXXXUltimate)
                     {
-                        W(o.Key, result);//同时更新文件
+                        _W(o.Key, result);//同时更新文件
                         o.Value = result;
                         o.Updatetime = DateTime.Now;
                         CacheTable[o.Key] = o;
@@ -424,7 +424,7 @@ namespace Devx.Cache
         /// <param name="key"></param>
         /// <param name="wtime"></param>
         /// <returns></returns>
-        private static T R(string key, out DateTime wtime)
+        private static T _R(string key, out DateTime wtime)
         {
             var filename = Path.Combine(BaseDirectory, key + ".cache");
             byte[] bytes = null;
@@ -452,19 +452,14 @@ namespace Devx.Cache
             }
             return o;
         }
-
-        /// <summary>
-        /// 更新数据到文件中
-        /// </summary>
-        /// <param name="key"></param>
-        /// <param name="o"></param>
-        /// <returns></returns>
-        private static bool W(string key, T o)
+        
+        private static bool _W(string key, T o)
         {
             var filename = Path.Combine(BaseDirectory, key + ".cache");
             byte[] bytes = null;
             try
             {
+                
                 if (o != null && o != default(T) && (bytes = Serialize(o)) != null && bytes.Length > 0)
                 {
                     using (var fs = new FileStream(filename, FileMode.Create, FileAccess.Write))
@@ -480,6 +475,57 @@ namespace Devx.Cache
             }
             return false;
         }
+
+        
+        private static readonly object _writer = new object();
+
+        #region 对外读写方法
+        public static T R(string key, out DateTime wtime)
+        {
+            lock (LockXXXUltimate)
+            {
+                return _R(key, out wtime);
+            }
+        }
+        public static T R(string key)
+        {
+            lock (LockXXXUltimate)
+            {
+                DateTime wtime = DateTime.MinValue;
+                return _R(key, out wtime);
+            }
+        }
+
+        public static bool W(string key, T o, int timeout)
+        {
+            lock (LockXXXUltimate)
+            {
+                var filename = Path.Combine(BaseDirectory, key + ".cache");
+                byte[] bytes = null;
+                try
+                {
+                    bool write = true;
+                    if (System.IO.File.Exists(filename))
+                    {
+                        write = DateTime.Now.Subtract(System.IO.File.GetLastWriteTime(filename)).TotalSeconds >= timeout;
+                    }
+                    if (write && o != null && o != default(T) && (bytes = Serialize(o)) != null && bytes.Length > 0)
+                    {
+                        using (var fs = new FileStream(filename, FileMode.Create, FileAccess.Write))
+                        {
+                            fs.Write(bytes, 0, bytes.Length);
+                        }
+                        return true;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Log("[W] Exception:" + ex.Message.ToString());
+                }
+            }
+            return false;
+        }
+        #endregion
 
         /// <summary>
         /// 序列化
@@ -643,7 +689,7 @@ namespace Devx.Cache
                                 e.Value = result;
                                 e.Updatetime = DateTime.Now;
                                 CacheTable[e.Key] = e;
-                                W(e.Key, result);//同时更新文件
+                                _W(e.Key, result);//同时更新文件
                             }
                         }
                     }

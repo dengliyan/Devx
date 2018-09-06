@@ -45,8 +45,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Cache\Caches.cs" />
+    <Compile Include="Cache\DbKey.cs" />
+    <Compile Include="Cache\IKeyPrefix.cs" />
     <Compile Include="Cache\LightWeightCache.cs" />
     <Compile Include="Cache\LRUCaching.cs" />
+    <Compile Include="Component\WindowsServiceInstaller.cs" />
+    <Compile Include="Configuration\ConfigParse.cs" />
     <Compile Include="Controls\Table.cs" />
     <Compile Include="DbProvider\Builders\ActionsHandler.cs" />
     <Compile Include="DbProvider\Builders\BuilderData.cs" />
@@ -88,12 +92,16 @@
     <Compile Include="DbProvider\Providers\IDbProvider.cs" />
     <Compile Include="DbProvider\Providers\MySql\MySqlProvider.cs" />
     <Compile Include="DbProvider\Providers\SqlServer\SqlServerProvider.cs" />
+    <Compile Include="Extensiones\CollectionsExtensiones.cs" />
+    <Compile Include="Extensiones\DataReaderExtensiones.cs" />
+    <Compile Include="Extensiones\ObjectExtensiones.cs" />
     <Compile Include="Extensiones\test.cs" />
     <Compile Include="Extensiones\ConvertToStringExtensiones.cs" />
     <Compile Include="Extensiones\ConvertTypeExtensiones.cs" />
     <Compile Include="Extensiones\Dynamic.cs" />
     <Compile Include="Extensiones\ConvertObjectExtensiones.cs" />
     <Compile Include="Extensiones\StringExtensiones.cs" />
+    <Compile Include="Extensiones\XmlExtensiones.cs" />
     <Compile Include="FileUploader.cs" />
     <Compile Include="Helper\EncryptHelper.cs" />
     <Compile Include="Helper\FileUploader.cs" />
@@ -104,13 +112,45 @@
     <Compile Include="Helper\ReflectionHelper.cs" />
     <Compile Include="Helper\ValidateHelper.cs" />
     <Compile Include="Helper\WebHelper.cs" />
+    <Content Include="Net\TCP\Listener\Asynchronous\AsyncEventArgs.cs" />
+    <Content Include="Net\TCP\Listener\Asynchronous\AsyncTCPServer.cs" />
+    <Content Include="Net\TCP\Listener\Asynchronous\TCPClientState.cs" />
+    <Content Include="Net\TCP\Listener\Synchronous\TCPClientHandle.cs" />
+    <Content Include="Net\TCP\Listener\Synchronous\TCPEventArgs.cs" />
+    <Content Include="Net\TCP\Listener\Synchronous\TCPServer.cs" />
+    <Content Include="Net\TCP\Sock\Asynchronous\AsyncSocketEventArgs.cs" />
+    <Content Include="Net\TCP\Sock\Asynchronous\AsyncSocketState.cs" />
+    <Content Include="Net\TCP\Sock\Asynchronous\AsyncSocketTCPServer.cs" />
+    <Content Include="Net\TCP\Sock\IOCP\AsyncIOCPServer.cs" />
+    <Content Include="Net\TCP\Sock\IOCP\AsyncUserToken.cs" />
+    <Content Include="Net\TCP\Sock\IOCP\AsyncUserTokenPool.cs" />
+    <Content Include="Net\TCP\Sock\IOCP\DynamicBufferManager.cs" />
+    <Content Include="Net\TCP\Sock\Synchronous\SocketClientHandle.cs" />
+    <Content Include="Net\TCP\Sock\Synchronous\SocketEventArgs.cs" />
+    <Content Include="Net\TCP\Sock\Synchronous\SocketTCPServer.cs" />
+    <Content Include="Net\UDP\Listener\Asynchronous\AsyncUDPEventArgs.cs" />
+    <Content Include="Net\UDP\Listener\Asynchronous\AsyncUDPServer.cs" />
+    <Content Include="Net\UDP\Listener\Asynchronous\AsyncUDPState.cs" />
+    <Content Include="Net\UDP\Listener\Synchronous\UDPEventArgs.cs" />
+    <Content Include="Net\UDP\Listener\Synchronous\UDPServer.cs" />
+    <Content Include="Net\UDP\Listener\Synchronous\UDPState.cs" />
+    <Content Include="Net\UDP\Sock\Asynchronous\AsyncSocketUDPEventArgs.cs" />
+    <Content Include="Net\UDP\Sock\Asynchronous\AsyncSocketUDPServer.cs" />
+    <Content Include="Net\UDP\Sock\Asynchronous\AsyncSocketUDPState.cs" />
+    <Content Include="Net\UDP\Sock\Synchronous\SocketUDPEventArgs.cs" />
+    <Content Include="Net\UDP\Sock\Synchronous\SocketUDPServer.cs" />
+    <Content Include="Net\UDP\Sock\Synchronous\SocketUDPState.cs" />
     <Compile Include="Photos.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Net\readme.txt" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>copy "$(TargetDir)" "E:\project\common\Devx\bin\Debug"</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
     <PreBuildEvent>
